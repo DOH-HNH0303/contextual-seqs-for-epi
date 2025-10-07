@@ -1,2 +1,7 @@
 assemblies
 assemblies/*
+bb_cluster_references
+*.txt
+elink.dtd
+esummary*
+
