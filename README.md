@@ -101,7 +101,7 @@ Output:
 
 ## 🙌 Acknowledgments
 
-Special thanks to the contributors who made BigBacter possible:
+Special thanks to the contributors who made this work possible:
 
 |Name|Association|Contribution|
 |-|-|-|
