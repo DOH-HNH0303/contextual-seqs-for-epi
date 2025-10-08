@@ -52,3 +52,14 @@ python get_sra.py --email <your_email@something.com> --db <BB_db>
 ```
 
 The output of this process will be `BigBacter.<db>.NCBI_filtered_<today_YYYYMMDD>.csv`
+
+Big thank you to other contributors!
+The following people made significant contributions to BigBacter:
+|Name|Association|Contribution|
+|-|-|-|
+|[Shawn Hawkens](https://github.com/@DOH-SEH2303) |WA DOH, Molecular Epi.|Co-contributor for which this project would not exist without|
+|[Jared Johnson](@DOH-JDJ0303) |WA DOH, Bioinformatics|Guidance with BigBacter and valueable sounding board for ideas|
+|[Dahlia Walters](@DOH-DEW3303)|WA DOH, Molecular Epi.|Provides guidance to local scope for which this project is targeted|
+
+
+Please email <waphl-bioinformatics@doh.wa.gov> if your name is missing from this list or if any of the information presented is incorrect.

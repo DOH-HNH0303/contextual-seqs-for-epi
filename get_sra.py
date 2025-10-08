@@ -61,7 +61,7 @@ with open("passed_dist_filter.csv") as f:
     reader = csv.reader(f)
     with open(f"BigBacter.{taxa}.NCBI_filtered_{today}.csv", "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["sample","taxa","assembly","sra"])
+        writer.writerow(["sample","taxa","genbank","sra"])
         for row in reader:
             filename, mash = row
             gcf_id = "_".join(filename.split("_")[:2])  # e.g. GCF_002120665.1
