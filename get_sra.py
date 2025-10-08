@@ -1,10 +1,19 @@
 import csv
 from Bio import Entrez
 import sys
+from argparse import ArgumentParser
+from datetime import date
+ # Example output: 2023-10-05
 
+parser = ArgumentParser()
+parser.add_argument("--email", dest="email", help="your.email@something.com as required by Entrez")
+parser.add_Argument("--db", dest="organism", help="In the format <Genus_species>")
 
-taxa = sys.argv[1]
-Entrez.email = "holly.halstead@doh.wa.gov"  # required by NCBI
+args = parser.parse_args() 
+Entrez.email = args.email
+taxa = args.organism
+today = str(date.today()).replace("-","")
+
 
 def get_biosample_from_gcf(gcf_id):
     """Return the BioSample accession (SAMN...) for a given assembly accession."""
@@ -47,18 +56,10 @@ def get_srr_from_biosample(biosample_accn):
             srrs.append(line.split(",")[0])
     return list(set(srrs))
 
-# # -------------
-# biosample_accn = "SAMN02422669"
 
-# # Search SRA for this BioSample
-# handle = Entrez.esearch(db="sra", term=biosample_accn)
-# record = Entrez.read(handle)
-# handle.close()
-# print(record["IdList"])  # should return one or more IDs
-# Process your CSV
 with open("passed_dist_filter.csv") as f:
     reader = csv.reader(f)
-    with open(f"NCBI_filtered_{taxa}.csv", "w", newline="") as f:
+    with open(f"BigBacter.{taxa}.NCBI_filtered_{today}.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["sample","taxa","assembly","sra"])
         for row in reader:
