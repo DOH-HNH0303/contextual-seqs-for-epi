@@ -1,65 +1,113 @@
-# A guide to searching for Relevant seqs to process with BigBacter
-This process is designed with BigBacter usage in mind, but scripts can be tweaked to work for other analyses. 
+# 🧬 Guide to Identifying Relevant Sequences for BigBacter Analysis
 
-1. Pull all non-redundant assemblies from NCBI within the last 10 years
+This workflow is designed for use with **BigBacter**, but the scripts can be adapted for other comparative genomics pipelines.
+
+---
+
+## 📥 Step 1: Download Non-Redundant Assemblies from NCBI
+
+Use the following script to pull all non-redundant genome assemblies released in the last 10 years:
+
 ```
-bash get-taxon-genomes.sh <NCBI_taxID>--include genome --mag exclude --exclude-multi-isolate --assembly-version latest --released-after <YYYY-MM-DD> --exclude-atypical
+bash get-taxon-genomes.sh <NCBI_taxID> \
+  --include genome \
+  --mag exclude \
+  --exclude-multi-isolate \
+  --assembly-version latest \
+  --released-after <YYYY-MM-DD> \
+  --exclude-atypical
 ```
 
+---
 
-2. Get the relevant cluster reference genomes. We are going to compare the downloaded NCBI assemblies from NCBI
+## 📦 Step 2: Retrieve Cluster Reference Genomes
+
+Download BigBacter cluster reference genomes for your target genus/species:
+
 ```
 python get_bb_references.py --bucket <s3_bucket> --db <Genus_species>
 ```
 
-This will pull down BigBacter cluster reference genomes will be saved as `bb_cluster_references/<Genus_species>_<cluster#>_ref.fa.gz`
+Output files will be saved to:
 
+`bb_cluster_references/<Genus_species>_<cluster#>_ref.fa.gz`
 
-3. Make a reference mash database from the cluster reference genomes
+---
+
+## 🗃️ Step 3: Build Mash Reference Database
+
+Create a Mash database from the reference genomes:
+
 ```
 bash make_ref_db.sh
 ```
-This will output a ref mash db as `ref_mash_db.msh`
 
+Output:
 
-4. Determine mash distances between each downloaded NCBI assembly and each cluster reference genome. First, you must determine the mash threshold to use for your organism. We recommend setting the scope of your filtering to still keep sequences that might not be close enough related to cluster the investigation sequences (=<100 SNPs) for two reasons; to provide context of the mash distances within your investigative clusters vs external NCBI sequences and to give buffer for mash distance due to recombination which BigBacter can mask when needed.
+`ref_mash_db.msh`
 
-A mash distance of 0.001 - 0.005 should work for most gram positive bacteria. Verify that `mash_distance*genome_size` is greater than 100 SNPs for your organism. 
+---
 
-***NOTE*** This is a starting estimate mash distance, increase the allowed distance if no sequences pass your distance filter. Additional consideration should be taken for organisms that are known to be highly recombinate such as Legionella.
-For example with Staphylococcus_aureus
+## 📏 Step 4: Calculate Mash Distances
+
+Compare downloaded NCBI assemblies to cluster reference genomes using Mash. First, determine an appropriate Mash distance threshold for your organism.
+
+### 🔬 Recommended Thresholds
+
+- For most Gram-positive bacteria: 0.001 - 0.005
+- Ensure: mash_distance × genome_size > 100 SNPs
+
+Example for *Staphylococcus aureus* (genome size ≈ 2.8 Mb):
+
+0.001 × 2,800,000 = 2,800 SNPs
+
+### ⚠️ Notes
+
+- If no sequences pass the filter, increase the Mash distance or relax filters in Step 1.
+- Highly recombinant organisms (e.g., *Legionella*) may require higher thresholds.
+
+Run the `get_mash_dist.sh` script; use `tmux` if necessary:
 
 ```
-# Staphylococcus_aureus genome size = 2,800,000
-0.001*2,800,000 = 2,800 # Greater than 100
+bash get_mash_dist.sh <mash_distance threshold;default is 0.001>
 ```
 
-This will output two files of interest: 
 
--`ref_nearest_nonref.csv` <br>
-    Contains the mash distance to for each cluster reference genome to the NCBI assembly that is most closely related. This helps provide context of how significant the within cluster SNP distances are to the distances to sequences outside of the cluster.
+### 📂 Output Files
 
--`passed_dist_filter.csv` <br>
-    CSV that contains the GenBank and/or RefSeq IDs that are equal to or less than the chosen mash distance to any of the cluster reference genomes. The mash distance listed for each ID is the smallest mash distance determined for the NCBI genome and any of the cluster reference genomes.
+- `ref_nearest_nonref.csv`  
+  Mash distance between each reference genome and its closest NCBI match.
 
-After completing this step, view the contexts of the files generated. If no NCBI sequences are output to `passed_dist_filter`, you may need to increase the allowed mash distance or reducing the filtering in step 1 (and pull another dataset).
+- `passed_dist_filter.csv`  
+  GenBank/RefSeq IDs within the chosen Mash distance threshold.
 
+---
 
-5. BigBacter requires both GenBank/RefSeq ID and SRR as input when using the `--ncbi` arg. Previous steps have been working soley with the GenBank/RefSeq ID, next is pulling the associated SRR _if one exists_. Many assemblies on NCBI *do not* have associated SRR, thus missing SRRs is not a bug but merely reflective to what actually exists. It is possible that no SRRs get returned in which case the data for possibly closely related seqs is not publically available on NCBI. To determine the (possible) SRR IDs for the NCBI assemblies, run:
+## 🔍 Step 5: Retrieve SRR IDs for Filtered Assemblies
+
+BigBacter requires both GenBank/RefSeq ID and SRR ID when using the `--ncbi` argument. Many assemblies lack associated SRRs—this is expected and not a bug.
+
+To retrieve SRR IDs (if available):
 
 ```
-python get_sra.py --email <your_email@something.com> --db <BB_db>
+python get_sra.py --email <your_email@domain.com> --db <BB_db>
 ```
 
-The output of this process will be `BigBacter.<db>.NCBI_filtered_<today_YYYYMMDD>.csv`
+Output:
 
-Big thank you to other contributors!
-The following people made significant contributions to BigBacter:
-|Name|Association|Contribution|
-|-|-|-|
-|[Shawn Hawkens](https://github.com/@DOH-SEH2303) |WA DOH, Molecular Epi.|Co-contributor for which this project would not exist without|
-|[Jared Johnson](@DOH-JDJ0303) |WA DOH, Bioinformatics|Guidance with BigBacter and valueable sounding board for ideas|
-|[Dahlia Walters](@DOH-DEW3303)|WA DOH, Molecular Epi.|Provides guidance to local scope for which this project is targeted|
+`BigBacter.<db>.NCBI_filtered_<YYYYMMDD>.csv`
 
+---
 
-Please email <waphl-bioinformatics@doh.wa.gov> if your name is missing from this list or if any of the information presented is incorrect.
+## 🙌 Acknowledgments
+
+Special thanks to the contributors who made BigBacter possible:
+
+| Name | Affiliation | Contribution |
+|------|-------------|--------------|
+| [Shawn Hawkens](https://github.com/DOH-SEH2303) | WA DOH, Molecular Epidemiology | Co-contributor; foundational to this project |
+| Jared Johnson (@DOH-JDJ0303) | WA DOH, Bioinformatics | Provided guidance and critical feedback |
+| Dahlia Walters (@DOH-DEW3303) | WA DOH, Molecular Epidemiology | Helped tailor the project to local needs |
+
+If your name is missing or information is incorrect, please contact:  
+waphl-bioinformatics@doh.wa.gov

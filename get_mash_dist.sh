@@ -6,10 +6,18 @@ set -euo pipefail
 # reference determine the closest non-reference assembly.
 #
 # Requirements: mash, flock, awk, sort, find, xargs, tr, grep
+#
+# Usage:
+#   ./script.sh [threshold]
+#
+# Example:
+#   ./script.sh          # uses default threshold 0.001
+#   ./script.sh 0.002    # uses threshold 0.002
+
+THRESHOLD="${1:-0.001}"
 
 ASSEMBLY_DIR="assemblies"
 REF_DB="ref_mash_db.msh"
-THRESHOLD=0.001
 OUT_CSV="passed_dist_filter.csv"
 REF_NEAREST_OUT="ref_nearest_nonref.csv"
 TMP_DIR=$(mktemp -d)
