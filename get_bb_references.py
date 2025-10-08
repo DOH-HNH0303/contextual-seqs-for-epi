@@ -1,5 +1,16 @@
 import boto3
 import os
+from argparse import ArgumentParser
+
+
+parser = ArgumentParser()
+parser.add_argument("--bucket", dest="bucket", help="Your BigBacter Dir or s3 Bucket (no s3://)")
+parser.add_Argument("--db", dest="organism", help="In the format <Genus_species>")
+
+args = parser.parse_args() 
+bucket = args.bucket
+organism = args.organism
+
 
 def download_all_refs(bucket="",organism="Staphylococcus_aureus", outdir="bb_cluster_references"):
     """
@@ -32,4 +43,4 @@ def download_all_refs(bucket="",organism="Staphylococcus_aureus", outdir="bb_clu
 # Example usage:
 # download_all_refs("my-bucket")
 if __name__ == "__main__":
-    download_all_refs("waphl-nextflow-batch-bucket",sys.argv[1])
+    download_all_refs(bucket, organism)
