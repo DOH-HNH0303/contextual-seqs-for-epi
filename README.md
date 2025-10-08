@@ -1,6 +1,6 @@
 # 🧬 Guide to Identifying Relevant Sequences for BigBacter Analysis
 
-This workflow is designed for use with **BigBacter**, but the scripts can be adapted for other comparative genomics pipelines.
+This workflow is designed for use with **BigBacter**, but the scripts can be adapted for other comparative genomics pipelines. To use this repository clone it to your local copmute resource and run the following commands within the repository directory.
 
 ---
 
@@ -90,7 +90,7 @@ BigBacter requires both GenBank/RefSeq ID and SRR ID when using the `--ncbi` arg
 To retrieve SRR IDs (if available):
 
 ```
-python get_sra.py --email <your_email@domain.com> --db <BB_db>
+python get_sra.py --email <your_email@domain.com> --db <Genus_species>
 ```
 
 Output:
