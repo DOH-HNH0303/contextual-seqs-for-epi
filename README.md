@@ -103,11 +103,11 @@ Output:
 
 Special thanks to the contributors who made BigBacter possible:
 
-| Name | Affiliation | Contribution |
-|------|-------------|--------------|
-| [Shawn Hawkens](https://github.com/DOH-SEH2303) | WA DOH, Molecular Epidemiology | Co-contributor; foundational to this project |
-| Jared Johnson (@DOH-JDJ0303) | WA DOH, Bioinformatics | Provided guidance and critical feedback |
-| Dahlia Walters (@DOH-DEW3303) | WA DOH, Molecular Epidemiology | Helped tailor the project to local needs |
+|Name|Association|Contribution|
+|-|-|-|
+|[Shawn Hawkens](https://github.com/@DOH-SEH2303) |WA DOH, Molecular Epi.|Co-contributor for which this project would not exist without|
+|[Jared Johnson](https://github.com/@DOH-JDJ0303) |WA DOH, Bioinformatics|Guidance with BigBacter and valueable sounding board for ideas|
+|[Dahlia Walters](https://github.com/@DOH-DEW3303)|WA DOH, Molecular Epi.|Provides guidance to local scope for which this project is targeted|
 
 If your name is missing or information is incorrect, please contact:  
 waphl-bioinformatics@doh.wa.gov
